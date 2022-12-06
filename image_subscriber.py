@@ -18,6 +18,9 @@ def callback(msg):
         resized = cv2.resize(orig, None, fx=0.5, fy=0.5)
         drawImg = resized
         gray = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
+        # test this
+        blurFrame = cv2.GaussianBlur(grat, (blurRegion, blurRegion), 0)
+        # changes ends here
         drawImg = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
         
         edged = cv2.Canny(gray, 35, 125)
