@@ -26,22 +26,10 @@ def callback(msg):
             
             handdistance = math.sqrt((y2-y1) ** 2 + (x2-x1) ** 2)
             #handdistanceCM = int(coff[0] * handdistance **2 + coff[1] * handdistance + coff[2])
-            
-            # determine orientation of hand
-            lmlist = hands[0]["lmlist"][:2]
-            x1, y1 = lmlist[0]
-            x2, y2 = lmlist[4]
-            
-            
-            if handtype = "Right":
-                distancetalker(handdistanceCM, "R")
-                continue
-            else:
-                distancetalker(handdistanceCM, "L")
-                continue
-            
-            
-            
+          
+            distancetalker(handdistanceCM)
+          
+ 
     except Exception as err:
     	print (err)
     
@@ -64,16 +52,13 @@ def listener():
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
 
-def distancetalker(distance, orientation):
+def distancetalker(distance):
     pub1 = rospy.Publisher('distanceCM', Int, queue_size=10)
-    pub2 = rospy.Publisher('orientation', Str, queue_size=10)
     rospy.init_node('distancetalker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         rospy.loginfo(distance)
         pub1.publish(distance)
-        rospy.loginfo(orientation)
-        pub2.publish(orientation)
         rate.sleep()
        
 
