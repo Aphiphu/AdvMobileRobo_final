@@ -64,13 +64,16 @@ def listener():
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
 
-def distancetalker(distance):
-    pub = rospy.Publisher('distanceRCM', Int, queue_size=10)
-    rospy.init_node('distanceRtalker', anonymous=True)
+def distancetalker(distance, orientation):
+    pub1 = rospy.Publisher('distanceCM', Int, queue_size=10)
+    pub2 = rospy.Publisher('orientation', Str, queue_size=10)
+    rospy.init_node('distancetalker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         rospy.loginfo(distance)
-        pub.publish(distance)
+        pub1.publish(distance)
+        rospy.loginfo(orientation)
+        pub2.publish(orientation)
         rate.sleep()
        
 
