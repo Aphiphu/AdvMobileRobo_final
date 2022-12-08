@@ -12,28 +12,30 @@ def showImage(img):
 
 def callback(msg):
     try:   
-      with handsModule.Hands(static_image_mode=False, min_detection_confidence=0.7, min_tracking_confidence=0.7, max_num_hands=2) as hands:
         while true:
           bridge = CvBridge()
           orig = bridge.imgmsg_to_cv2(msg, "bgr8")
           drawImg = orig
           resized = cv2.resize(frame, (640, 480))
-          results = hands.process(cv2.cvtColor(frame1, cv2.COLOR_BGR2RGB))
-          if results.multi_hand_landmarks != None:
-                for handLandmarks in results.multi_hand_landmarks:
-                    drawingModule.draw_landmarks(frame1, handLandmarks, handsModule.HAND_CONNECTIONS)
-                    for point in handsModule.HandLandmark:
-                      
-                      normalizedLandmark = handLandmarks.landmark[point]
-                      pixelCoordinatesLandmark= drawingModule._normalized_to_pixel_coordinates(normalizedLandmark.x, normalizedLandmark.y, 640, 480)
-                      
-                      #point 0 is the wrist
-                      if point == 0:
-                          print(point)
-                          print(pixelCoordinatesLandmark)
-                          print(normalizedLandmark)
-           
-
+          hands, img = detector.findHands(resized)
+          
+          if hands:
+            lmlist = hands[0]["lmlist"][:2]
+            x1, y1 = lmlist[5]
+            x2, y2 = lmlist[17]
+            
+            handdistance = math.sqrt((y2-y1) ** 2 + (x2-x1) ** 2)
+            #handdistanceCM = int(coff[0] * handdistance **2 + coff[1] * handdistance + coff[2])
+            
+            if handtype = "R":
+                distancetalker(handdistanceCM)
+                continue
+            else:
+                distancetalker(handdistanceCM)
+                continue
+            
+            
+            
     except Exception as err:
     	print (err)
     
@@ -42,8 +44,12 @@ def callback(msg):
 def start_node():
     rospy.init_node('image_subscriber')
     rospy.loginfo('image subscriber node started')
-    drawingModule = mediapipe.solutions.drawing_utils
-    handsModule = mediapipe.solutions.hands
+    detector = HandDetector(detectionCon=0.8, maxHands=1)\
+    
+    rawlength = []
+    reallength = []
+    coff = np.polyfit(rawlength, reallength, 2)
+    
     listener()
 
 def listener():
@@ -51,6 +57,15 @@ def listener():
     
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
+
+def distancetalker(distance):
+    pub = rospy.Publisher('distanceCM', Int, queue_size=10)
+    rospy.init_node('talker', anonymous=True)
+    rate = rospy.Rate(10) # 10hz
+    while not rospy.is_shutdown():
+        rospy.loginfo(distance)
+        pub.publish(distance)
+        rate.sleep()
 
 
 if __name__ == '__main__':
