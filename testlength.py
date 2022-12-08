@@ -25,10 +25,7 @@ def callback(msg):
             x2, y2 = lmlist[17]
             
             handdistance = math.sqrt((y2-y1) ** 2 + (x2-x1) ** 2)
-            print(handdistance)
-            
-            
-            
+            rospy.loginfo(handdistance)
             
     except Exception as err:
     	print (err)
@@ -40,9 +37,9 @@ def start_node():
     rospy.loginfo('image subscriber node started')
     detector = HandDetector(detectionCon=0.8, maxHands=1)\
     
-    rawlength = []
-    reallength = []
-    #coff = np.polyfit(rawlength, reallength, 2)
+    rawlength =  []
+    reallength = [10, 15, 20, 25, 30, 35, 40, 45, 50]
+    coff = np.polyfit(rawlength, reallength, 2)
     
     listener()
 
