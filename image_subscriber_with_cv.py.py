@@ -27,11 +27,17 @@ def callback(msg):
             handdistance = math.sqrt((y2-y1) ** 2 + (x2-x1) ** 2)
             #handdistanceCM = int(coff[0] * handdistance **2 + coff[1] * handdistance + coff[2])
             
-            if handtype = "R":
-                distancetalker(handdistanceCM)
+            # determine orientation of hand
+            lmlist = hands[0]["lmlist"][:2]
+            x1, y1 = lmlist[0]
+            x2, y2 = lmlist[4]
+            
+            
+            if handtype = "Right":
+                distancetalker(handdistanceCM, "R")
                 continue
             else:
-                distancetalker(handdistanceCM)
+                distancetalker(handdistanceCM, "L")
                 continue
             
             
@@ -42,7 +48,7 @@ def callback(msg):
     showImage(drawImg)
 
 def start_node():
-    rospy.init_node('image_subscriber')
+    rospy.init_node('imagesubscriber')
     rospy.loginfo('image subscriber node started')
     detector = HandDetector(detectionCon=0.8, maxHands=1)\
     
@@ -59,14 +65,14 @@ def listener():
     rospy.spin()
 
 def distancetalker(distance):
-    pub = rospy.Publisher('distanceCM', Int, queue_size=10)
-    rospy.init_node('talker', anonymous=True)
+    pub = rospy.Publisher('distanceRCM', Int, queue_size=10)
+    rospy.init_node('distanceRtalker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         rospy.loginfo(distance)
         pub.publish(distance)
         rate.sleep()
-
+       
 
 if __name__ == '__main__':
     try:
