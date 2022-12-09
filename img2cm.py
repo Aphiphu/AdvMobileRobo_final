@@ -12,24 +12,28 @@ def showImage(img):
 
 def callback(msg):
     try:   
-        while true:
-          bridge = CvBridge()
-          orig = bridge.imgmsg_to_cv2(msg, "bgr8")
-          drawImg = orig
-          resized = cv2.resize(frame, (640, 480))
-          hands, img = detector.findHands(resized)
+        bridge = CvBridge()
+        orig = bridge.imgmsg_to_cv2(msg, "bgr8")
+        drawImg = orig
+        resized = cv2.resize(orig, (640, 480))
+        hands, img = detector.findHands(resized)
           
-          if hands:
-            lmlist = hands[0]["lmlist"][:2]
-            x1, y1 = lmlist[5]
-            x2, y2 = lmlist[17]
+        if hands:
+           #check if its an open palm function insert here
+           lmlist = hands[0]["lmlist"]
+           x1, y1 = lmlist[5][:2]
+           x2, y2 = lmlist[17][:2]
             
-            handdistance = math.sqrt((y2-y1) ** 2 + (x2-x1) ** 2)
-            #handdistanceCM = int(coff[0] * handdistance **2 + coff[1] * handdistance + coff[2])
-          
-            distancetalker(handdistanceCM)
-          
- 
+           handdistance = math.sqrt((y2-y1) ** 2 + (x2-x1) ** 2)
+           #handdistanceCM = int(coff[0] * handdistance **2 + coff[1] * handdistance + coff[2])
+            
+        distancetalker(handdistanceCM)
+            
+            
+           
+            
+            
+            
     except Exception as err:
     	print (err)
     
@@ -53,12 +57,12 @@ def listener():
     rospy.spin()
 
 def distancetalker(distance):
-    pub1 = rospy.Publisher('distanceCM', Int, queue_size=10)
+    pub = rospy.Publisher('distanceCM', int, queue_size=10)
     rospy.init_node('distancetalker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         rospy.loginfo(distance)
-        pub1.publish(distance)
+        pub.publish(distance)
         rate.sleep()
        
 
